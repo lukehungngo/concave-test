@@ -21,6 +21,7 @@ func NewDataFetcher(router *gin.RouterGroup, dataChan chan interface{}) {
 // @Summary      Push data for new block
 // @Description  Push data for new block, new block will be sent to other go-routine for block creation process
 // @Tags         Data
+// @Param        request        body      string  true   "Request Data"
 // @Accept       json
 // @Produce      json
 // @Success      200          {object}  ResponseSuccess

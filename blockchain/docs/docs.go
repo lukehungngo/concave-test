@@ -43,13 +43,13 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Limit",
                         "name": "limit",
-                        "in": "path"
+                        "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "Offset",
                         "name": "offset",
-                        "in": "path"
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -75,6 +75,17 @@ const docTemplate = `{
                     "Data"
                 ],
                 "summary": "Push data for new block",
+                "parameters": [
+                    {
+                        "description": "Request Data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -114,7 +125,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8081",
+	Host:             "localhost:8080",
 	BasePath:         "/api/v0",
 	Schemes:          []string{},
 	Title:            "Swagger Example API",

@@ -20,18 +20,18 @@ func NewBlockHandler(router *gin.RouterGroup, blockRepository BlockRepository) {
 
 // GetBlocks godoc
 // @Summary      Get Many Blocks
-// @Description  Get many blocks with default limit 10 and offset 0, block will be return as descendent order
+// @Description  Get many blocks with default limit 10 and offset 0, block will be return as ascendent order
 // @Tags         Block
 // @Accept       json
 // @Produce      json
-// @Param        limit        path      int  false   "Limit"
-// @Param        offset   	  path      int  false   "Offset"
+// @Param        limit        query      int  false   "Limit"
+// @Param        offset   	  query      int  false   "Offset"
 // @Success      200          {object}  ResponseSuccess
 // @Failure      200          {object}  ResponseFail
 // @Router       /block/get [get]
 func (bh *BlockHandler) GetBlocks(c *gin.Context) {
-	limitStr := c.Param("limit")
-	offsetStr := c.Param("offset")
+	limitStr := c.Query("limit")
+	offsetStr := c.Query("offset")
 	limit := 10
 	offset := 0
 	var err error
@@ -49,7 +49,6 @@ func (bh *BlockHandler) GetBlocks(c *gin.Context) {
 			return
 		}
 	}
-
 	blocks, err := bh.blockRepository.GetBlocks(limit, offset*limit)
 	if err != nil {
 		c.JSON(http.StatusOK, NewResponseFail(ERROR_REPOSITORY, err))

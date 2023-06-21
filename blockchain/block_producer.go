@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"math/rand"
-	"os"
-	"os/signal"
-	"syscall"
 	"time"
 )
 
@@ -39,25 +36,10 @@ func Init(producerAccount *Account, dataChan chan interface{}, blockRepository B
 	return blockProducer, nil
 }
 
-func (bp *BlockProducer) Run() {
+func (bp *BlockProducer) Run(done chan bool) {
 	if bp.isStart {
 		fmt.Println("Block Producer already started")
 	}
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs,
-		syscall.SIGHUP,
-		syscall.SIGINT,
-		syscall.SIGTERM,
-		syscall.SIGQUIT,
-	)
-	done := make(chan bool, 1)
-
-	go func() {
-		<-sigs
-		fmt.Println("Block Producer is stopping...")
-		close(done)
-		return
-	}()
 
 	if bp == nil {
 		panic("Block Producer is not init yet")

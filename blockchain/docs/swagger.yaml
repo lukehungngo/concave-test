@@ -14,7 +14,7 @@ definitions:
       status:
         type: string
     type: object
-host: localhost:8081
+host: localhost:8080
 info:
   contact:
     email: support@swagger.io
@@ -36,11 +36,11 @@ paths:
         be return as descendent order
       parameters:
       - description: Limit
-        in: path
+        in: query
         name: limit
         type: integer
       - description: Offset
-        in: path
+        in: query
         name: offset
         type: integer
       produces:
@@ -59,6 +59,13 @@ paths:
       - application/json
       description: Push data for new block, new block will be sent to other go-routine
         for block creation process
+      parameters:
+      - description: Request Data
+        in: body
+        name: request
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:

@@ -22,16 +22,22 @@ import (
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host      localhost:8082
+// @host      localhost:8080
 // @BasePath  /api/v0
 func main() {
 
 	docs.SwaggerInfo.Title = "Swagger Example API"
-	docs.SwaggerInfo.Description = "This is a sample server prism server."
+	docs.SwaggerInfo.Description = "This is a sample server concave test server."
 	docs.SwaggerInfo.Version = "1.0"
-	docs.SwaggerInfo.Host = "localhost" + ":" + "8082"
+	docs.SwaggerInfo.Host = "localhost" + ":" + "8080"
 	docs.SwaggerInfo.BasePath = "/api/v0"
 	docs.SwaggerInfo.Schemes = []string{"http"}
+
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println(fmt.Errorf("recovery: f=%+v", r))
+		}
+	}()
 
 	var (
 		// testKey is a private key to use for funding a tester account.
@@ -55,7 +61,13 @@ func main() {
 	if err != nil {
 		panic(fmt.Sprintf("can't create block producer: error=%+v", err))
 	}
-	go blockProducer.Run()
+
+	done := make(chan bool, 1)
+	defer func() {
+		close(done)
+	}()
+
+	go blockProducer.Run(done)
 
 	engine := gin.Default()
 	engine.Use(cors.Default())
@@ -66,11 +78,8 @@ func main() {
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	port := "8080"
-	//go func() {
 	engineError := engine.Run(":" + port)
 	if engineError != nil {
 		fmt.Println("Start server error", engineError)
-		return
 	}
-	return
 }

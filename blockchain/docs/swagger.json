@@ -15,7 +15,7 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:8081",
+    "host": "localhost:8080",
     "basePath": "/api/v0",
     "paths": {
         "/block/get": {
@@ -36,13 +36,13 @@
                         "type": "integer",
                         "description": "Limit",
                         "name": "limit",
-                        "in": "path"
+                        "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "Offset",
                         "name": "offset",
-                        "in": "path"
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -68,6 +68,17 @@
                     "Data"
                 ],
                 "summary": "Push data for new block",
+                "parameters": [
+                    {
+                        "description": "Request Data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
