@@ -23,10 +23,8 @@ type BlockProducer struct {
 	dataChan        chan interface{}
 }
 
-var blockProducer *BlockProducer
-
-func Init(producerAccount *Account, dataChan chan interface{}, blockRepository BlockRepository) error {
-	blockProducer = &BlockProducer{
+func Init(producerAccount *Account, dataChan chan interface{}, blockRepository BlockRepository) (*BlockProducer, error) {
+	blockProducer := &BlockProducer{
 		producerAccount: producerAccount,
 		blockRepository: blockRepository,
 		dataChan:        dataChan,
@@ -34,58 +32,72 @@ func Init(producerAccount *Account, dataChan chan interface{}, blockRepository B
 	}
 	lastBlock, _, err := blockProducer.blockRepository.GetLastBlock()
 	if err != nil {
-		return err
+		return nil, err
 	}
 	blockProducer.lastBlock = lastBlock
 
-	return nil
+	return blockProducer, nil
 }
 
-func Run() {
+func (bp *BlockProducer) Run() {
+	if bp.isStart {
+		fmt.Println("Block Producer already started")
+	}
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs,
 		syscall.SIGHUP,
 		syscall.SIGINT,
 		syscall.SIGTERM,
-		syscall.SIGQUIT)
+		syscall.SIGQUIT,
+	)
 	done := make(chan bool, 1)
 
 	go func() {
 		<-sigs
+		fmt.Println("Block Producer is stopping...")
 		close(done)
 		return
 	}()
 
-	if blockProducer == nil {
+	if bp == nil {
 		panic("Block Producer is not init yet")
 	}
-
+	bp.isStart = true
+	defer func() {
+		bp.isStart = false
+	}()
+	fmt.Println("Block Producer is started")
 	for {
 		select {
 		case <-done:
+			close(bp.dataChan)
+			fmt.Println("Block Producer is stopped")
 			return
-		case data := <-blockProducer.dataChan:
+		case data := <-bp.dataChan:
 			blockNumber := uint64(0)
 			previousLastBlock := common.Hash{}
-			if blockProducer.lastBlock != nil {
-				blockNumber = blockProducer.lastBlock.BlockData.BlockNumber + 1
-				previousLastBlock = blockProducer.lastBlock.Hash
+			if bp.lastBlock != nil {
+				blockNumber = bp.lastBlock.BlockData.BlockNumber + 1
+				previousLastBlock = bp.lastBlock.Hash
 			}
 			newBlockData := NewBlockData(
 				previousLastBlock,
 				blockNumber,
 				rand.Uint64(),
 				data,
-				blockProducer.producerAccount.Address,
+				bp.producerAccount.Address,
 			)
-			newBlock, err := CreateNewBlock(newBlockData, blockProducer.producerAccount.PrivateKey)
+			newBlock, err := CreateNewBlock(newBlockData, bp.producerAccount.PrivateKey)
 			if err != nil {
-				fmt.Printf("Block Creating Error: blockNumber=%d - data=%+v - error=%+v", blockNumber, data, err)
+				fmt.Printf("Block Creating Error: blockNumber=%d - data=%+v - error=%+v\n", blockNumber, data, err)
+				continue
 			}
-			if err := blockProducer.blockRepository.StoreBlock(newBlock); err != nil {
-				fmt.Printf("Block Store Error: blockNumber=%d - data=%+v - error=%+v", blockNumber, data, err)
-
+			if err := bp.blockRepository.StoreBlock(newBlock); err != nil {
+				fmt.Printf("Block Store Error: blockNumber=%d - data=%+v - error=%+v\n", blockNumber, data, err)
+				continue
 			}
+			bp.lastBlock = newBlock
+			fmt.Printf("BLOCK CREATED | number=%d - hash=%+v\n", newBlock.BlockData.BlockNumber, newBlock.Hash)
 		default:
 			time.Sleep(100 * time.Millisecond)
 		}

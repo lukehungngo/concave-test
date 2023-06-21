@@ -14,24 +14,35 @@ func NewBlockHandler(router *gin.RouterGroup, blockRepository BlockRepository) {
 	handler := &BlockHandler{
 		blockRepository: blockRepository,
 	}
-	token := router.Group("/data")
-	token.POST("/push", handler.GetBlocks)
+	block := router.Group("/block")
+	block.GET("/get", handler.GetBlocks)
 }
 
+// GetBlocks godoc
+// @Summary      Get Many Blocks
+// @Description  Get many blocks with default limit 10 and offset 0, block will be return as descendent order
+// @Tags         Block
+// @Accept       json
+// @Produce      json
+// @Param        limit        path      int  false   "Limit"
+// @Param        offset   	  path      int  false   "Offset"
+// @Success      200          {object}  ResponseSuccess
+// @Failure      200          {object}  ResponseFail
+// @Router       /block/get [get]
 func (bh *BlockHandler) GetBlocks(c *gin.Context) {
 	limitStr := c.Param("limit")
 	offsetStr := c.Param("offset")
 	limit := 10
 	offset := 0
 	var err error
-	if limitStr == "" {
+	if limitStr != "" {
 		limit, err = strconv.Atoi(limitStr)
 		if err != nil {
 			c.JSON(http.StatusOK, NewResponseFail(ERROR_BAD_LIMIT, limitStr))
 			return
 		}
 	}
-	if offsetStr == "" {
+	if offsetStr != "" {
 		offset, err = strconv.Atoi(offsetStr)
 		if err != nil {
 			c.JSON(http.StatusOK, NewResponseFail(ERROR_BAD_OFFSET, offsetStr))
@@ -39,7 +50,7 @@ func (bh *BlockHandler) GetBlocks(c *gin.Context) {
 		}
 	}
 
-	blocks, err := bh.blockRepository.GetBlocks(limit, offset)
+	blocks, err := bh.blockRepository.GetBlocks(limit, offset*limit)
 	if err != nil {
 		c.JSON(http.StatusOK, NewResponseFail(ERROR_REPOSITORY, err))
 		return

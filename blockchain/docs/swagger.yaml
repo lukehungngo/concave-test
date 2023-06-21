@@ -1,0 +1,72 @@
+basePath: /api/v0
+definitions:
+  main.ResponseFail:
+    properties:
+      data: {}
+      error_code:
+        type: string
+      status:
+        type: string
+    type: object
+  main.ResponseSuccess:
+    properties:
+      data: {}
+      status:
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /block/get:
+    get:
+      consumes:
+      - application/json
+      description: Get many blocks with default limit 10 and offset 0, block will
+        be return as descendent order
+      parameters:
+      - description: Limit
+        in: path
+        name: limit
+        type: integer
+      - description: Offset
+        in: path
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.ResponseFail'
+      summary: Get Many Blocks
+      tags:
+      - Block
+  /data/push:
+    post:
+      consumes:
+      - application/json
+      description: Push data for new block, new block will be sent to other go-routine
+        for block creation process
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.ResponseFail'
+      summary: Push data for new block
+      tags:
+      - Data
+swagger: "2.0"

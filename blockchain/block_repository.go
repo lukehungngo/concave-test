@@ -87,7 +87,6 @@ func (l LevelDbBlockRepository) GetBlocks(limit, offset int) ([]*Block, error) {
 		}
 
 		// Process the key-value pair
-		//key := copyByteArray(iter.Key())
 		value := copyByteArray(iter.Value())
 		blockHash := common.BytesToHash(value)
 		blockHashKey := append([]byte(BLOCK_HASH_PREFIX), blockHash[:]...)
