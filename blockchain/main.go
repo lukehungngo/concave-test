@@ -5,6 +5,8 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"lukehungngo/concave-test/v2/docs"
 )
 
@@ -61,7 +63,9 @@ func main() {
 
 	NewDataFetcher(routerV0, dataChan)
 	NewBlockHandler(routerV0, blockRepository)
-	port := "8085"
+	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+
+	port := "8080"
 	//go func() {
 	engineError := engine.Run(":" + port)
 	if engineError != nil {
