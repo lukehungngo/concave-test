@@ -22,18 +22,18 @@ func NewDataFetcher(router *gin.RouterGroup, dataChan chan interface{}) {
 // @Description  Push data for new block, new block will be sent to other go-routine for block creation process
 // @Tags         Data
 // @Param        request        body      string  true   "Request Data"
-// @Accept       json
+// @Accept       text/plain
 // @Produce      json
 // @Success      200          {object}  ResponseSuccess
 // @Failure      200          {object}  ResponseFail
 // @Router       /data/push [post]
 func (df *DataFetcher) PushData(c *gin.Context) {
-	jsonData, err := c.GetRawData()
+	data, err := c.GetRawData()
 	if err != nil {
-		c.JSON(http.StatusOK, NewResponseFail(ERROR_PUSH_BAD_DATA, jsonData))
+		c.JSON(http.StatusOK, NewResponseFail(ERROR_PUSH_BAD_DATA, data))
 		return
 	}
-	go df.pushData(jsonData)
+	go df.pushData(string(data))
 	c.JSON(http.StatusOK, NewResponseSuccess("data is received"))
 	return
 }

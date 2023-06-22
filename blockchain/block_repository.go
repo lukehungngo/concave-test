@@ -12,6 +12,7 @@ type BlockRepository interface {
 	StoreBlock(block *Block) error
 	GetLastBlock() (*Block, bool, error)
 	GetBlocks(limit, offset int) ([]*Block, error)
+	GetBlockByNumber(blockNumber uint64) (*Block, bool, error)
 }
 
 const (
@@ -110,6 +111,32 @@ func (l LevelDbBlockRepository) GetBlocks(limit, offset int) ([]*Block, error) {
 		return nil, err
 	}
 	return blocks, nil
+}
+
+func (l LevelDbBlockRepository) GetBlockByNumber(blockNumber uint64) (*Block, bool, error) {
+	blockNumberKey := append([]byte(BLOCK_NUMBER_PREFIX), convertUint64ToBytes(blockNumber)...)
+	if has, err := l.db.Has(blockNumberKey, nil); err != nil {
+		return nil, false, err
+	} else if !has {
+		return nil, false, nil
+	}
+
+	blockHashValue, err := l.db.Get(blockNumberKey, nil)
+	if err != nil {
+		return nil, false, err
+
+	}
+	blockHashKey := append([]byte(BLOCK_HASH_PREFIX), blockHashValue[:]...)
+	blockData, err := l.db.Get(blockHashKey, nil)
+	if err != nil {
+		return nil, false, err
+	}
+	block := &Block{}
+	if err := json.Unmarshal(blockData, block); err != nil {
+		return nil, false, err
+	}
+
+	return block, true, nil
 }
 
 func convertUint64ToBytes(number uint64) []byte {

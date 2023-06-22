@@ -28,12 +28,31 @@ info:
   title: Swagger Example API
   version: "1.0"
 paths:
+  /block/{number}:
+    get:
+      description: Get Block as by Byte array representation given a block number
+      parameters:
+      - description: Number
+        in: path
+        name: number
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.ResponseFail'
+      summary: Get Block as by Byte array representation given a block number
+      tags:
+      - Block
   /block/get:
     get:
       consumes:
       - application/json
       description: Get many blocks with default limit 10 and offset 0, block will
-        be return as descendent order
+        be return as ascendent order
       parameters:
       - description: Limit
         in: query
@@ -56,7 +75,7 @@ paths:
   /data/push:
     post:
       consumes:
-      - application/json
+      - text/plain
       description: Push data for new block, new block will be sent to other go-routine
         for block creation process
       parameters:

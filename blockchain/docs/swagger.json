@@ -20,7 +20,7 @@
     "paths": {
         "/block/get": {
             "get": {
-                "description": "Get many blocks with default limit 10 and offset 0, block will be return as descendent order",
+                "description": "Get many blocks with default limit 10 and offset 0, block will be return as ascendent order",
                 "consumes": [
                     "application/json"
                 ],
@@ -55,11 +55,40 @@
                 }
             }
         },
+        "/block/{number}": {
+            "get": {
+                "description": "Get Block as by Byte array representation given a block number",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Block"
+                ],
+                "summary": "Get Block as by Byte array representation given a block number",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Number",
+                        "name": "number",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/main.ResponseFail"
+                        }
+                    }
+                }
+            }
+        },
         "/data/push": {
             "post": {
                 "description": "Push data for new block, new block will be sent to other go-routine for block creation process",
                 "consumes": [
-                    "application/json"
+                    "text/plain"
                 ],
                 "produces": [
                     "application/json"

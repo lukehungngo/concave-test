@@ -17,6 +17,8 @@ const (
 	ERROR_BAD_LIMIT     = "10002"
 	ERROR_BAD_OFFSET    = "10003"
 	ERROR_REPOSITORY    = "10004"
+	ERROR_NOT_FOUND     = "10005"
+	ERROR_BAD_DATA      = "10006"
 )
 
 type ResponseFail struct {
