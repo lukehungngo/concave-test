@@ -1,0 +1,16 @@
+=============== Jun 22, 2023 (+07) ===============
+18:30:24.580165 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+18:30:24.660515 db@open opening
+18:30:24.663842 version@stat F·[] S·0B[] Sc·[]
+18:30:24.705422 db@janitor F·2 G·0
+18:30:24.705549 db@open done T·44.939375ms
+=============== Jun 22, 2023 (+07) ===============
+18:41:03.060743 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+18:41:03.062547 version@stat F·[] S·0B[] Sc·[]
+18:41:03.062609 db@open opening
+18:41:03.062700 journal@recovery F·1
+18:41:03.063704 journal@recovery recovering @1
+18:41:03.085991 memdb@flush created L0@2 N·6 S·1008B "BLO..p`U,v6":"LAS..OCK,v1"
+18:41:03.086664 version@stat F·[1] S·1008B[1008B] Sc·[0.25]
+18:41:03.166864 db@janitor F·3 G·0
+18:41:03.168746 db@open done T·106.109917ms

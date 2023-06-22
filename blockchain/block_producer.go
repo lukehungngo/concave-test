@@ -65,7 +65,7 @@ func (bp *BlockProducer) Run(done chan bool) {
 			newBlockData := NewBlockData(
 				previousLastBlock,
 				blockNumber,
-				rand.Uint64(),
+				uint64(rand.Uint32()),
 				data.(string),
 				bp.producerAccount.Address,
 			)

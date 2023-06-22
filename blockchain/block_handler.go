@@ -98,7 +98,7 @@ func (bh *BlockHandler) GetBlockBytesByNumber(c *gin.Context) {
 		c.JSON(http.StatusOK, NewResponseFail(ERROR_BAD_DATA, fmt.Sprintf("bad block: block=%d - error=%+v", number, err)))
 		return
 	}
-	m["blockBytes"] = fmt.Sprintf("%v", common.Bytes2Hex(blockBytes))
+	m["blockBytes"] = fmt.Sprintf("0x%v", common.Bytes2Hex(blockBytes))
 	c.JSON(http.StatusOK, NewResponseSuccess(m))
 	return
 }
